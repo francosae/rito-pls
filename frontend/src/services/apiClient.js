@@ -31,8 +31,8 @@ class ApiClient {
     }
   }
 
-  async fetchZipper(){
-    return await this.request({ endpoint: `/send`, method: `GET`,})
+  async fetchPUUID(summonerName){
+    return await this.request({ endpoint: `riot/fetchSummoner`, method: `POST`, data: {summonerName}})
   }
 }
 

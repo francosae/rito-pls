@@ -1,7 +1,6 @@
 const app = require("./app")
-
-const PORT = process.env.port || 3005
-
+const { PORT } = require("./config");
+require("colors");
 app.listen(PORT, () => {
-  console.log(`🚀 Server listening on http://localhost:${PORT}`)
+  console.log(`🚀 Server listening on http://localhost:${PORT}`.brightBlue)
 })

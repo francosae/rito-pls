@@ -1,25 +1,26 @@
 import { useState, useEffect } from 'react'
-import apiClient from '../../services/apiClient'
-import axios from 'axios'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { NextUIProvider, Table, Collapse, Text } from "@nextui-org/react";
+import API from '../../services/apiClient';
 import './App.css'
 
-function App() {
-  
-  useEffect(() =>{
-    async function zipUp(){
-      axios.get(`/send`)
-      .then(res => {
-        console.log(res);
-      })
-    }
-    zipUp()
-  })
-
-  return (
-    <h1>
-      hi 
-    </h1>
+export default function AppContainer(){
+  return(
+    <NextUIProvider>
+      <App/>
+    </NextUIProvider>
   )
 }
+async function test(){
+  const response = await API.fetchPUUID("DeclaringIntent")
+  console.log(response)
+}
 
-export default App
+test()
+
+function App() {
+  return (
+    <div>
+    </div>
+  )
+}
