@@ -2,7 +2,8 @@ const express = require("express")
 const router = express.Router()
 const axios = require('axios')
 const { riotKey } = require('../config')
-
+const matchData = require("../models/matchData")
+const masteredSupports = require("../models/masteredSupports")
 const riotUrl = "https://na1.api.riotgames.com"
 const secUrl = "https://americas.api.riotgames.com"
 const urlKey = `api_key=${riotKey}`
@@ -15,7 +16,7 @@ function fetchSummoner(summonerName){
 }
 
 function fetchMatches(PUUID){
-    return axios.get(`${secUrl}/lol/match/v5/matches/by-puuid/${PUUID}/ids?count=2&${urlKey}`)
+    return axios.get(`${secUrl}/lol/match/v5/matches/by-puuid/${PUUID}/ids?count=3&${urlKey}`)
     .then(response => {
         return response.data
     }).catch(err => err);
@@ -28,6 +29,12 @@ function fetchMatchData(matchID){
     }).catch(err => err)
 }
 
+function fetchChampionMastery(encryptedID){
+    return axios.get(`${riotUrl}/lol/champion-mastery/v4/champion-masteries/by-summoner/${encryptedID}?${urlKey}`)
+    .then(response =>{
+        return response.data
+    }).catch(err => err)
+}
 
 router.post('/fetchSummoner', async (req, res) => {
     const summonerObj = await fetchSummoner(req.body.summonerName)
@@ -46,8 +53,12 @@ router.post('/fetchSummoner', async (req, res) => {
         const matchData = await fetchMatchData(matchIDs[match])
         matchDataArr.push(matchData)
     }
-
-    res.status(201).json(matchDataArr)
+    const supportMatches = await matchData.fetchSupportMatches(matchDataArr, summonerObj.puuid)
+    const championMastery = await fetchChampionMastery(summonerObj.id)
+    const supportMastery = await masteredSupports.filterMasteries(championMastery)
+    // console.log(supportMastery)
+    res.status(201).json(supportMatches)
 })
+
 
 module.exports = router;

@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { NextUIProvider, Table, Collapse, Text } from "@nextui-org/react";
+/* Components */
+import Landing from '../Landing/Landing';
+/* */
 import API from '../../services/apiClient';
 import './App.css'
 
@@ -12,7 +15,7 @@ export default function AppContainer(){
   )
 }
 async function test(){
-  const response = await API.fetchPUUID("DeclaringIntent")
+  const response = await API.fetchPUUID("No Poon Intended")
   console.log(response)
 }
 
@@ -20,7 +23,15 @@ test()
 
 function App() {
   return (
-    <div>
-    </div>
+    <h1>
+      hello
+    </h1>
+    // <div className='App'>
+    //   <BrowserRouter>
+    //     <Routes>
+    //       <Route path="/" element={<Landing /> } />
+    //     </Routes>
+    //   </BrowserRouter>
+    // </div>
   )
 }
