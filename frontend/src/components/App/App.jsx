@@ -15,7 +15,7 @@ export default function AppContainer(){
   )
 }
 async function test(){
-  const response = await API.fetchPUUID("No Poon Intended")
+  const response = await API.fetchPUUID("Kahlinn")
   console.log(response)
 }
 

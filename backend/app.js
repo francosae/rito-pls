@@ -19,5 +19,6 @@ app.use((error, req, res, next) => {
 app.get('/', (req, res, next) => {
     return res.status(200).json({ server: "alive", all: "good"})
 })
+
   module.exports = app
 

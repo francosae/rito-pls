@@ -1,14 +1,16 @@
 var champions = require('../loldata/champion.json')
+const { supportChampIDs } = require("../loldata/supportchampions");
 
 class masteredSupports {
     static async filterMasteries(masteries){
-        var supportChampions = []
-        for (const champion in champions.data){
-            if (champions.data[champion].tags.includes("Support")){
-                supportChampions.push(champions.data[champion])
+    var masteredChamps = []
+        for (const mastery in masteries){
+            if (supportChampIDs.includes(masteries[mastery]["championId"])){  
+                masteredChamps.push(masteries[mastery])
+                // Checking if the Champion Masteries are support champions, if they are, push and return
             }
         }
-        console.log(supportChampions)
+    return masteredChamps
     }
 }
 
