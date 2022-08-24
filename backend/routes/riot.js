@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const axios = require('axios')
-const { fetchSupportMatches } = require("../models/matchData")
+const { filterSupportMatches, filterSupportData, averageSupportData } = require("../models/matchData")
 const { filterMasteries } = require("../models/masteredSupports")
 const { randomSelect, fetchLeagueSummoner } = require("../models/leagueData")
 const { fetchSummoner, fetchMatches, fetchMatchData, 
@@ -29,7 +29,7 @@ router.post('/fetchSummoner', async (req, res) => {
 
     const championMastery = await fetchChampionMastery(summonerObj.id) 
     const supportMastery = await filterMasteries(championMastery)
-    const supportMatches = await fetchSupportMatches(matchDataArr, summonerObj.puuid)
+    const supportMatches = await filterSupportMatches(matchDataArr, summonerObj.puuid)
 
     const summonerLeague = await fetchLeagueData(summonerObj.id)
     const entireLeague = await fetchEntireLeague(summonerLeague[0].leagueId)
@@ -37,7 +37,6 @@ router.post('/fetchSummoner', async (req, res) => {
 
 
     var randomSummonerIDs = []
-
     for (const summoner in randomSelected){
         var encryptedID = randomSelected[summoner].summonerId
         randomSummonerIDs.push(encryptedID)
@@ -46,17 +45,35 @@ router.post('/fetchSummoner', async (req, res) => {
     var randomSummonerPUUIDs = []
     for (const ID in randomSummonerIDs){
         const summonerObj = await fetchLeagueSummoner(randomSummonerIDs[ID])
+        
         randomSummonerPUUIDs.push(summonerObj.puuid)
     }
 
     var randomMatchesIDs = {}
     for (const ID in randomSummonerPUUIDs){
+        var matchDataArr = []
         const matchIDs = await fetchMatches(randomSummonerPUUIDs[ID])
-        randomMatchesIDs[randomSummonerPUUIDs[ID]] = matchIDs
-    }
-    console.log(randomMatchesIDs)
+        for (match in matchIDs){
+            const matchData = await fetchMatchData(matchIDs[match])
+            matchDataArr.push(matchData)
+        }
+        const supportMatches = await filterSupportMatches(matchDataArr, randomSummonerPUUIDs[ID])
+        
+        var supportMatchData = []
+        for (const match in supportMatches){
+            const supportData = await filterSupportData(supportMatches[match], randomSummonerPUUIDs[ID])
+            supportMatchData.push(supportData)
+        }
 
-    const data = { supportMatches: supportMatches, supportMastery: supportMastery, summonerLeague: summonerLeague, entireLeague: entireLeague, random: randomSelected}
+        const averagedMatchData = await averageSupportData(supportMatchData)
+
+        randomMatchesIDs[randomSummonerPUUIDs[ID]] = averagedMatchData
+    }
+
+
+
+    // entireLeague: entireLeague,
+    const data = { supportMatches: supportMatches, supportMastery: supportMastery, summonerLeague: summonerLeague, randomSummoners: randomSelected, randomMatches: randomMatchesIDs}
     res.status(201).json(data)
 })
 

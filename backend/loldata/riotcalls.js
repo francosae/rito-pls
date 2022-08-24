@@ -1,5 +1,7 @@
 const axios = require('axios')
 const { riotUrl, secUrl, urlKey } = require('../config')
+const { BadRequestError } = require('../utils/errors')
+//throw new BadRequestError(`Missing ${property} in request body`);
 
 class riotCalls {
 
@@ -19,7 +21,7 @@ class riotCalls {
     
 
     static async fetchMatches(PUUID, count){
-        return axios.get(`${secUrl}/lol/match/v5/matches/by-puuid/${PUUID}/ids?queue=420&count=10&${urlKey}`)
+        return axios.get(`${secUrl}/lol/match/v5/matches/by-puuid/${PUUID}/ids?queue=420&count=5&${urlKey}`)
         .then(response => {
             return response.data
         }).catch(err => err);
